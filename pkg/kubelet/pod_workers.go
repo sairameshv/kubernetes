@@ -1252,7 +1252,9 @@ func (p *podWorkers) podWorkerLoop(podUID types.UID, podUpdates <-chan struct{})
 				//  Improving this latency also reduces the possibility that a terminated
 				//  container's status is garbage collected before we have a chance to update the
 				//  API server (thus losing the exit code).
+				klog.InfoS("Before fetching status---------------------------->", "pod", podRef, "podUID", podUID, "updateType", update.WorkType)
 				status, err = p.podCache.GetNewerThan(update.Options.Pod.UID, lastSyncTime)
+				klog.InfoS("After fetching the Pod status ----------------------------------------->", "podstatus", status)
 
 				if err != nil {
 					// This is the legacy event thrown by manage pod loop all other events are now dispatched

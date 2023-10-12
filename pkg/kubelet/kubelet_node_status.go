@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"reflect"
 	goruntime "runtime"
 	"sort"
 	"strings"
@@ -231,6 +232,9 @@ func updateDefaultResources(initialNode, existingNode *v1.Node) bool {
 		} else {
 			existingNode.Status.Allocatable = make(map[v1.ResourceName]resource.Quantity)
 		}
+	}
+	if !reflect.DeepEqual(existingNode.Labels, initialNode.Labels) {
+		requiresUpdate = true
 	}
 	return requiresUpdate
 }

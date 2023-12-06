@@ -3362,7 +3362,7 @@ var _ = common.SIGDescribe("Services", func() {
 				Labels: testSvcLabels,
 			},
 			Spec: v1.ServiceSpec{
-				Type: "LoadBalancer",
+				Type: v1.ServiceTypeLoadBalancer,
 				Ports: []v1.ServicePort{{
 					Name:       "http",
 					Protocol:   v1.ProtocolTCP,

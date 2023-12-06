@@ -10,18 +10,15 @@ var (
 		// alpha features that are not gated
 		"[Disabled:Alpha]": {
 			`\[Feature:StorageVersionAPI\]`,
-			`\[Feature:StatefulSetAutoDeletePVC\]`,
-			`\[Feature:ProxyTerminatingEndpoints\]`,
 			`\[Feature:UserNamespacesSupport\]`,
-			`\[Feature:ReadWriteOncePod\]`,
-			`\[Feature:SELinuxMountReadWriteOncePod\]`,
-			`\[Feature:PodSchedulingReadiness\]`,
 			`\[Feature:InPlacePodVerticalScaling\]`,
 			`\[Feature:RecoverVolumeExpansionFailure\]`,
 			`\[Feature:SELinux\]`,
-			`\[Feature:SidecarContainers\]`,
-			`\[Feature: PersistentVolumeLastPhaseTransitionTime\]`,
 			`\[Feature:WatchList\]`,
+			`\[Feature:PodLifecycleSleepAction\]`,
+			`\[Feature:ClusterTrustBundle\]`,
+			`\[Feature:MultiCIDRServiceAllocator\]`,
+			`\[Feature:ServiceCIDRs\]`,
 		},
 		// tests for features that are not implemented in openshift
 		"[Disabled:Unimplemented]": {

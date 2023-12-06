@@ -577,7 +577,7 @@ var Annotations = map[string]string{
 
 	"[sig-auth] SubjectReview should support SubjectReview API operations [Conformance]": " [Suite:openshift/conformance/parallel/minimal] [Suite:k8s]",
 
-	"[sig-auth] [Feature:ClusterTrustBundle] [Feature:ClusterTrustBundleProjection] should be able to mount a single ClusterTrustBundle by name": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
+	"[sig-auth] [Feature:ClusterTrustBundle] [Feature:ClusterTrustBundleProjection] should be able to mount a single ClusterTrustBundle by name": " [Disabled:Alpha] [Suite:k8s]",
 
 	"[sig-auth] [Feature:NodeAuthenticator] The kubelet can delegate ServiceAccount tokens to the API server": " [Skipped:ibmroks] [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
@@ -1391,7 +1391,7 @@ var Annotations = map[string]string{
 
 	"[sig-network] [Feature:PerformanceDNS] [Serial] Should answer DNS query for maximum number of services per cluster": " [Slow] [Suite:k8s]",
 
-	"[sig-network] [Feature:ServiceCIDRs] should create Services and servce on different Service CIDRs": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
+	"[sig-network] [Feature:ServiceCIDRs] should create Services and servce on different Service CIDRs": " [Disabled:Alpha] [Suite:k8s]",
 
 	"[sig-network] [Feature:Topology Hints] should distribute endpoints evenly": " [Disabled:SpecialConfig] [Suite:k8s]",
 
@@ -1813,67 +1813,67 @@ var Annotations = map[string]string{
 
 	"[sig-node] [Feature:Example] Secret should create a pod that reads a secret": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [Feature:PodLifecycleSleepAction] when create a pod with lifecycle hook using sleep action reduce GracePeriodSeconds during runtime": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
+	"[sig-node] [Feature:PodLifecycleSleepAction] when create a pod with lifecycle hook using sleep action reduce GracePeriodSeconds during runtime": " [Disabled:Alpha] [Suite:k8s]",
 
-	"[sig-node] [Feature:PodLifecycleSleepAction] when create a pod with lifecycle hook using sleep action valid prestop hook using sleep action": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
+	"[sig-node] [Feature:PodLifecycleSleepAction] when create a pod with lifecycle hook using sleep action valid prestop hook using sleep action": " [Disabled:Alpha] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should *not* be restarted by liveness probe because startup probe delays it": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should *not* be restarted by liveness probe because startup probe delays it": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should *not* be restarted with a /healthz http liveness probe": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should *not* be restarted with a /healthz http liveness probe": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should *not* be restarted with a GRPC liveness probe": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should *not* be restarted with a GRPC liveness probe": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should *not* be restarted with a exec \"cat /tmp/health\" liveness probe": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should *not* be restarted with a exec \"cat /tmp/health\" liveness probe": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should *not* be restarted with a non-local redirect http liveness probe": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should *not* be restarted with a non-local redirect http liveness probe": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should *not* be restarted with a tcp:8080 liveness probe": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should *not* be restarted with a tcp:8080 liveness probe": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be ready immediately after startupProbe succeeds": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be ready immediately after startupProbe succeeds": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted by liveness probe after startup probe enables it": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted by liveness probe after startup probe enables it": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted startup probe fails": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted startup probe fails": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted with a /healthz http liveness probe": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted with a /healthz http liveness probe": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted with a GRPC liveness probe": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted with a GRPC liveness probe": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted with a exec \"cat /tmp/health\" liveness probe": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted with a exec \"cat /tmp/health\" liveness probe": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted with a failing exec liveness probe that took longer than the timeout": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted with a failing exec liveness probe that took longer than the timeout": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted with a local redirect http liveness probe": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted with a local redirect http liveness probe": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted with an exec liveness probe with timeout [MinimumKubeletVersion:1.20]": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should be restarted with an exec liveness probe with timeout [MinimumKubeletVersion:1.20]": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should have monotonically increasing restart count": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should have monotonically increasing restart count": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should mark readiness on pods to false and disable liveness probes while pod is in progress of terminating": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should mark readiness on pods to false and disable liveness probes while pod is in progress of terminating": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should mark readiness on pods to false while pod is in progress of terminating when a pod has a readiness probe": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should mark readiness on pods to false while pod is in progress of terminating when a pod has a readiness probe": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should not be ready with an exec readiness probe timeout [MinimumKubeletVersion:1.20]": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should not be ready with an exec readiness probe timeout [MinimumKubeletVersion:1.20]": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should override timeoutGracePeriodSeconds when LivenessProbe field is set": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should override timeoutGracePeriodSeconds when LivenessProbe field is set": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should override timeoutGracePeriodSeconds when StartupProbe field is set": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container should override timeoutGracePeriodSeconds when StartupProbe field is set": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container with readiness probe should not be ready before initial delay and never restart": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container with readiness probe should not be ready before initial delay and never restart": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container with readiness probe that fails should never be ready and never restart": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Probing restartable init container with readiness probe that fails should never be ready and never restart": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Restartable Init Container Lifecycle Hook when create a pod with lifecycle hook should execute poststart exec hook properly": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Restartable Init Container Lifecycle Hook when create a pod with lifecycle hook should execute poststart exec hook properly": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Restartable Init Container Lifecycle Hook when create a pod with lifecycle hook should execute poststart http hook properly": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Restartable Init Container Lifecycle Hook when create a pod with lifecycle hook should execute poststart http hook properly": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Restartable Init Container Lifecycle Hook when create a pod with lifecycle hook should execute poststart https hook properly [MinimumKubeletVersion:1.23]": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Restartable Init Container Lifecycle Hook when create a pod with lifecycle hook should execute poststart https hook properly [MinimumKubeletVersion:1.23]": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Restartable Init Container Lifecycle Hook when create a pod with lifecycle hook should execute prestop exec hook properly": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Restartable Init Container Lifecycle Hook when create a pod with lifecycle hook should execute prestop exec hook properly": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Restartable Init Container Lifecycle Hook when create a pod with lifecycle hook should execute prestop http hook properly": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Restartable Init Container Lifecycle Hook when create a pod with lifecycle hook should execute prestop http hook properly": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
-	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Restartable Init Container Lifecycle Hook when create a pod with lifecycle hook should execute prestop https hook properly [MinimumKubeletVersion:1.23]": " [Disabled:Alpha] [Suite:k8s]",
+	"[sig-node] [NodeAlphaFeature:SidecarContainers] [Feature:SidecarContainers] Restartable Init Container Lifecycle Hook when create a pod with lifecycle hook should execute prestop https hook properly [MinimumKubeletVersion:1.23]": " [Suite:openshift/conformance/parallel] [Suite:k8s]",
 
 	"[sig-node] [Serial] Pod InPlace Resize Container (scheduler-focused) [Feature:InPlacePodVerticalScaling] pod-resize-scheduler-tests": " [Disabled:Alpha] [Suite:k8s]",
 

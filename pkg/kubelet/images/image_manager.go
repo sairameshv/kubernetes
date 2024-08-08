@@ -20,16 +20,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
-	"path/filepath"
 	"strings"
-	"sync"
 	"time"
 
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
-	utiljson "k8s.io/apimachinery/pkg/util/json"
 	"k8s.io/client-go/tools/record"
 	"k8s.io/client-go/util/flowcontrol"
 	"k8s.io/klog/v2"
@@ -61,20 +57,13 @@ type imageManager struct {
 
 	podPullingTimeRecorder ImagePodPullingTimeRecorder
 
-	keyring *credentialprovider.DockerKeyring
-	// ensureSecretPulledImages - map of imageref (image digest) to successful secret pulled image details
-	ensureSecretPulledImages     map[string]*ImagePullInfo
+	keyring                      *credentialprovider.DockerKeyring
 	pullImageSecretRecheckPeriod metav1.Duration
 	pullImageSecretRecheck       bool
-	lock                         sync.RWMutex
-	fsLock                       sync.RWMutex
-	// imageStateManagerPath root directory to store pull image metadata
-	imageStateManagerPath string
+	state                        State
 }
 
 var _ ImageManager = &imageManager{}
-
-const imageManagerstateFileName = "image_state_manager"
 
 // NewImageManager instantiates a new ImageManager object.
 func NewImageManager(recorder record.EventRecorder, imageService kubecontainer.ImageService, imageBackOff *flowcontrol.Backoff,
@@ -92,6 +81,15 @@ func NewImageManager(recorder record.EventRecorder, imageService kubecontainer.I
 	if utilfeature.DefaultFeatureGate.Enabled(features.KubeletEnsureSecretPulledImages) && pullImageSecretRecheck != nil {
 		pullImageSecretCheck = *pullImageSecretRecheck
 	}
+
+	var imageRefs []string
+	if images, err := imageService.ListImages(context.Background()); err == nil {
+		for _, image := range images {
+			if ref, err := imageService.GetImageRef(context.Background(), image.Spec); err == nil {
+				imageRefs = append(imageRefs, ref)
+			}
+		}
+	}
 	return &imageManager{
 		recorder:                     recorder,
 		imageService:                 imageService,
@@ -99,10 +97,9 @@ func NewImageManager(recorder record.EventRecorder, imageService kubecontainer.I
 		puller:                       puller,
 		podPullingTimeRecorder:       podPullingTimeRecorder,
 		keyring:                      keyring,
-		ensureSecretPulledImages:     make(map[string]*ImagePullInfo),
 		pullImageSecretRecheckPeriod: pullImageSecretRecheckPeriod,
 		pullImageSecretRecheck:       pullImageSecretCheck,
-		imageStateManagerPath:        filepath.Join(rootDirectory, imageManagerstateFileName),
+		state:                        newImageManagerCache(rootDirectory, imageRefs),
 	}
 }
 
@@ -140,25 +137,6 @@ func (m *imageManager) logIt(objRef *v1.ObjectReference, eventtype, event, prefi
 	}
 }
 
-// EnsuredInfo contains the data if an image is ensured and the last ensured time
-type EnsuredInfo struct {
-	// true for ensured secret
-	Ensured bool `json:"ensured"`
-	// the secret should be verified again if current time is after the due date.
-	// and the due date is `PullImageSecretRecheckPeriod` after last ensured date.
-	// `PullImageSecretRecheckPeriod` is configurable in kubelet config.
-	LastEnsuredDate time.Time `json:"lastEnsuredDate"`
-}
-
-type ImagePullInfo struct {
-	// TODO: (mikebrow) time of last pull for this imageRef
-	// TODO: (mikebrow) time of pull for each particular auth hash
-	//       note @mrunalp makes a good point that we can utilize /apimachinery/pkg/util/sets/string.go here
-
-	// map of auths hash (keys) used to successfully pull this imageref
-	Auths map[string]*EnsuredInfo `json:"auths"`
-}
-
 // EnsureImageExists pulls the image for the specified pod and imageRef, and returns
 // (imageRef, error message, error).
 func (m *imageManager) EnsureImageExists(ctx context.Context, objRef *v1.ObjectReference, pod *v1.Pod, imgRef string, pullSecrets []v1.Secret, podSandboxConfig *runtimeapi.PodSandboxConfig, podRuntimeHandler string, pullPolicy v1.PullPolicy) (imageRef, message string, err error) {
@@ -194,7 +172,7 @@ func (m *imageManager) EnsureImageExists(ctx context.Context, objRef *v1.ObjectR
 	present := imageRef != ""
 	var pulledBySecret, ensuredBySecret bool
 	if m.pullImageSecretRecheck {
-		err = m.loadEnsureSecretPulledImagesData()
+		err = m.state.loadImageManagerCache(imageRef)
 		if err != nil {
 			msg := fmt.Sprintf("Failed to load image manager state %q: %v", spec.Image, err)
 			return "", msg, err
@@ -264,18 +242,9 @@ func (m *imageManager) EnsureImageExists(ctx context.Context, objRef *v1.ObjectR
 		// for this imageref (digest)
 		// save the data of only images that have imageRef
 		if imageRef != "" {
-			m.lock.RLock()
-			digest := m.ensureSecretPulledImages[imageRef]
-			m.lock.RUnlock()
-			if digest == nil {
-				digest = &ImagePullInfo{Auths: make(map[string]*EnsuredInfo)}
-			}
-			digest.Auths[imagePullResult.pullCredentialsHash] = &EnsuredInfo{true, time.Now()}
-			m.lock.Lock()
-			m.ensureSecretPulledImages[imageRef] = digest
-			m.lock.Unlock()
+			m.state.setAuthInfo(imageRef, imagePullResult.pullCredentialsHash, &EnsuredInfo{true, time.Now()})
 		}
-		err = m.storeEnsureSecretPulledImagesData()
+		err = m.state.setImagePullInfo(imageRef, imagePullResult.pullCredentialsHash, &EnsuredInfo{true, time.Now()})
 		if err != nil {
 			msg := fmt.Sprintf("Failed to store image manager state %q: %v", spec.Image, err)
 			return "", msg, err
@@ -283,39 +252,6 @@ func (m *imageManager) EnsureImageExists(ctx context.Context, objRef *v1.ObjectR
 	}
 
 	return imagePullResult.imageRef, "", nil
-}
-
-func (m *imageManager) storeEnsureSecretPulledImagesData() error {
-	byteData, err := utiljson.Marshal(m.ensureSecretPulledImages)
-	if err != nil {
-		return err
-	}
-	m.fsLock.Lock()
-	defer m.fsLock.Unlock()
-	err = os.WriteFile(m.imageStateManagerPath, byteData, 0644)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *imageManager) loadEnsureSecretPulledImagesData() error {
-	_, err := os.Stat(m.imageStateManagerPath)
-	if err != nil && !os.IsExist(err) {
-		klog.InfoS("Failed to stat file", "file", m.imageStateManagerPath, "error", err)
-		return nil
-	}
-	m.fsLock.Lock()
-	defer m.fsLock.Unlock()
-	byteData, err := os.ReadFile(m.imageStateManagerPath)
-	if err != nil {
-		return err
-	}
-	err = utiljson.Unmarshal(byteData, &m.ensureSecretPulledImages)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func evalCRIPullErr(imgRef string, err error) (errMsg string, errRes error) {
@@ -375,10 +311,8 @@ func applyDefaultImageTag(image string) (string, error) {
 // image has already been authenticated through a successful pull request
 // and the same auth exists for this podSandbox/image.
 func (m *imageManager) isEnsuredBySecret(imageRef string, image kubecontainer.ImageSpec, pullSecrets []v1.Secret) (pulledBySecret bool, ensuredBySecret bool, _ error) {
-	m.lock.Lock()
-	defer m.lock.Unlock()
 	if m.pullImageSecretRecheck {
-		err := m.refreshCache()
+		err := m.state.refreshImageManagerCache(m.pullImageSecretRecheck, m.pullImageSecretRecheckPeriod)
 		if err != nil {
 			return pulledBySecret, ensuredBySecret, err
 		}
@@ -388,7 +322,7 @@ func (m *imageManager) isEnsuredBySecret(imageRef string, image kubecontainer.Im
 	}
 
 	// if the image is in the ensured secret pulled image list, it is pulled by secret
-	pulledBySecret = m.ensureSecretPulledImages[imageRef] != nil
+	pulledBySecret = m.state.getImagePullInfo(imageRef) != nil
 
 	img := image.Image
 	repoToPull, _, _, err := parsers.ParseImageName(img)
@@ -425,40 +359,12 @@ func (m *imageManager) isEnsuredBySecret(imageRef string, image kubecontainer.Im
 				klog.ErrorS(err, "Failed to hash auth", "auth", auth)
 				continue
 			}
-			m.lock.RLock()
-			digest := m.ensureSecretPulledImages[imageRef]
-			m.lock.RUnlock()
-			if digest != nil {
-				ensuredInfo := digest.Auths[hash]
-				if ensuredBySecret = ensuredInfo != nil && ensuredInfo.Ensured; ensuredBySecret {
-					return pulledBySecret, ensuredBySecret, nil
-				}
+			ensuredInfo := m.state.getAuthInfo(imageRef, hash)
+			if ensuredBySecret = ensuredInfo != nil && ensuredInfo.Ensured; ensuredBySecret {
+				return pulledBySecret, ensuredBySecret, nil
 			}
+
 		}
 	}
 	return pulledBySecret, ensuredBySecret, nil
-}
-
-func (m *imageManager) refreshCache() error {
-	var lock sync.RWMutex
-	lock.Lock()
-	defer lock.Unlock()
-	if m.pullImageSecretRecheck && m.pullImageSecretRecheckPeriod.Duration == 0 {
-		// Based on the design proposal of the enhancement, the kubelet is not supposed to invalidate the cache
-		// Reference: https://github.com/kubernetes/enhancements/tree/master/keps/sig-node/2535-ensure-secret-pulled-images#proposal
-		return nil
-	}
-	for k, v := range m.ensureSecretPulledImages {
-		for i, auth := range v.Auths {
-			if auth != nil && auth.LastEnsuredDate.Add(m.pullImageSecretRecheckPeriod.Duration).Before(time.Now()) {
-				delete(m.ensureSecretPulledImages[k].Auths, i)
-			}
-			/* TODO: When do we delete the metadata?
-			if len(v.Auths) == 0 {
-				delete(m.ensureSecretPulledImages, k)
-			}
-			*/
-		}
-	}
-	return m.storeEnsureSecretPulledImagesData()
 }
